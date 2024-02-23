@@ -96,8 +96,17 @@ double ConvertUnits(string units)
 var answer2 = ConvertUnits(task2.parameters).ToString();
 Console.WriteLine($"Answer: {Colors.Green}{answer2}{ANSICodes.Reset}");
 
-Response task2AnswerResponse = await httpUtils.Post(baseURL + taskEndpoint + myPersonalID + "/" + taskID, answer.ToString());
+Response task2AnswerResponse = await httpUtils.Post(baseURL + taskEndpoint + myPersonalID + "/" + task2ID, answer2.ToString());
 Console.WriteLine($"Answer: {Colors.Green}{task2AnswerResponse}{ANSICodes.Reset}");
+
+//#### THIRD TASK
+
+string task3ID = "kuTw53L";
+
+Response task3Response = await httpUtils.Get(baseURL + taskEndpoint + myPersonalID + "/" + task3ID);
+Console.WriteLine(task3Response);
+Task task3 = JsonSerializer.Deserialize<Task>(task3Response.content);
+Console.WriteLine($"TASK: {ANSICodes.Effects.Bold}{task3?.title}{ANSICodes.Reset}\n{task3?.description}\nParameters: {Colors.Yellow}{task3?.parameters}{ANSICodes.Reset}");
 
 
 
