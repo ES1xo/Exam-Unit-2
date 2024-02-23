@@ -81,6 +81,26 @@ Console.WriteLine(task2Response);
 Task task2 = JsonSerializer.Deserialize<Task>(task2Response.content);
 Console.WriteLine($"TASK: {ANSICodes.Effects.Bold}{task2?.title}{ANSICodes.Reset}\n{task2?.description}\nParameters: {Colors.Yellow}{task2?.parameters}{ANSICodes.Reset}");
 
+
+
+
+double ConvertUnits(string units)
+{
+    double result = 0;
+    int farenheit = int.Parse(units);
+    result = Math.Round((farenheit - 32) * 5 / 9.0, 2);
+
+    return result;
+}
+
+var answer2 = ConvertUnits(task2.parameters).ToString();
+Console.WriteLine($"Answer: {Colors.Green}{answer2}{ANSICodes.Reset}");
+
+Response task2AnswerResponse = await httpUtils.Post(baseURL + taskEndpoint + myPersonalID + "/" + taskID, answer.ToString());
+Console.WriteLine($"Answer: {Colors.Green}{task2AnswerResponse}{ANSICodes.Reset}");
+
+
+
 class Task
 {
     public string? title { get; set; }
