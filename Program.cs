@@ -1,4 +1,7 @@
-﻿﻿using HTTPUtils;
+﻿﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using HTTPUtils;
 using System.Text.Json;
 using AnsiTools;
 using Colors = AnsiTools.ANSICodes.Colors;
@@ -8,7 +11,7 @@ Console.Clear();
 Console.WriteLine("Starting Assignment 2");
 
 // SETUP 
-const string myPersonalID = "54d1e5a5246fa2339bf9080a09d9fb60182bab8ce39ccfdc5f7667e0c48ac9cd"; 
+const string myPersonalID = "54d1e5a5246fa2339bf9080a09d9fb60182bab8ce39ccfdc5f7667e0c48ac9cd";
 const string baseURL = "https://mm-203-module-2-server.onrender.com/";
 const string startEndpoint = "start/"; // baseURl + startEndpoint + myPersonalID
 const string taskEndpoint = "task/";   // baseURl + taskEndpoint + myPersonalID + "/" + taskID
@@ -32,7 +35,7 @@ Console.WriteLine($"TASK: {ANSICodes.Effects.Bold}{task1?.title}{ANSICodes.Reset
 string numerals = task1.parameters;
 
 Dictionary<string, int> numeralTranslation = new Dictionary<string, int>
-{ 
+{
  {"I", 1},
  {"V", 5},
  {"X", 10},
@@ -40,12 +43,12 @@ Dictionary<string, int> numeralTranslation = new Dictionary<string, int>
  {"C", 100},
  {"D", 500},
  {"M", 1000}
-};      
+};
 
 int ConvertNumeral(string numerals)
 {
     int result = 0;
-   
+
     for (int i = 0; i < task1.parameters.Length; i++)
     {
         int numberTranslated = numeralTranslation[numerals[i].ToString()];
@@ -109,7 +112,82 @@ Task task3 = JsonSerializer.Deserialize<Task>(task3Response.content);
 Console.WriteLine($"TASK: {ANSICodes.Effects.Bold}{task3?.title}{ANSICodes.Reset}\n{task3?.description}\nParameters: {Colors.Yellow}{task3?.parameters}{ANSICodes.Reset}");
 
 
+string numbers = task3.parameters;
+string[] numbersArray = numbers.Split(',');
+List<int> numbersList = new List<int>();
 
+foreach (var numbersSplt in numbersArray)
+{
+    if (int.TryParse(numbersSplt.Trim(), out int number))
+    {
+       numbersList.Add(number); 
+    }
+    
+}
+
+foreach (int number in numbersList)
+{
+    bool isPrime = IsPrime(number);
+    
+}
+
+static bool IsPrime(int numbers)
+{
+    if (numbers < 2)
+        return false;
+    for (int i = 2; i <= Math.Sqrt(numbers); i++)
+    {
+        if (numbers % i == 0)
+        {
+            return false;
+        }
+            
+    }
+
+    return true;
+}
+
+List<string> primeResults = new List<string>();
+
+foreach (int number in numbersList)
+{
+    if (IsPrime(number))
+    {
+        primeResults.Add(number.ToString());
+    }
+}
+
+primeResults.Sort((a, b) => int.Parse(a).CompareTo(int.Parse(b)));
+
+string answer3 = string.Join(",", primeResults);
+
+Response task3AnswerResponse = await httpUtils.Post(baseURL + taskEndpoint + myPersonalID + "/" + task3ID, answer3.ToString());
+Console.WriteLine($"Answer: {Colors.Green}{task3AnswerResponse}{ANSICodes.Reset}");
+
+//#### FOURTH TASK
+
+string task4ID = "KO1pD3";
+
+Response task4Response = await httpUtils.Get(baseURL + taskEndpoint + myPersonalID + "/" + task4ID);
+Console.WriteLine(task4Response);
+Task task4 = JsonSerializer.Deserialize<Task>(task4Response.content);
+Console.WriteLine($"TASK: {ANSICodes.Effects.Bold}{task4?.title}{ANSICodes.Reset}\n{task4?.description}\nParameters: {Colors.Yellow}{task4?.parameters}{ANSICodes.Reset}");
+
+static int FindNextNumber(string patternString)
+    {
+        
+        int[] pattern = patternString.Split(',')
+                                     .Select(int.Parse)
+                                     .ToArray();
+
+        
+        int difference = pattern[1] - pattern[0];
+
+    
+        int nextNumber = pattern[pattern.Length - 1] + difference;
+
+        return nextNumber;
+    }
 class Task
 {
     public string? title { get; set; }
