@@ -173,21 +173,28 @@ Console.WriteLine(task4Response);
 Task task4 = JsonSerializer.Deserialize<Task>(task4Response.content);
 Console.WriteLine($"TASK: {ANSICodes.Effects.Bold}{task4?.title}{ANSICodes.Reset}\n{task4?.description}\nParameters: {Colors.Yellow}{task4?.parameters}{ANSICodes.Reset}");
 
+string patternString = task4.parameters;
+string[] patternSplit = patternString.Split(','); 
+
+
+int[] pattern = Array.ConvertAll(patternSplit, int.Parse);
+
 static int FindNextNumber(string patternString)
-    {
-        
-        int[] pattern = patternString.Split(',')
-                                     .Select(int.Parse)
-                                     .ToArray();
+{
+    string[] patternSplit = patternString.Split(','); 
+   
+    int[] pattern = Array.ConvertAll(patternSplit, int.Parse);
 
-        
-        int difference = pattern[1] - pattern[0];
+    int difference = pattern[1] - pattern[0];
+    int nextNumber = pattern[pattern.Length - 1] + difference;
 
-    
-        int nextNumber = pattern[pattern.Length - 1] + difference;
+    return nextNumber;
+}
 
-        return nextNumber;
-    }
+string answer4 = FindNextNumber(task4.parameters).ToString();
+
+Response task4AnswerResponse = await httpUtils.Post(baseURL + taskEndpoint + myPersonalID + "/" + task4ID, answer4.ToString());
+Console.WriteLine($"Answer: {Colors.Green}{task4AnswerResponse}{ANSICodes.Reset}");
 class Task
 {
     public string? title { get; set; }
