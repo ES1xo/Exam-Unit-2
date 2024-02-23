@@ -2,6 +2,7 @@
 using System.Text.Json;
 using AnsiTools;
 using Colors = AnsiTools.ANSICodes.Colors;
+using System.Xml.XPath;
 
 Console.Clear();
 Console.WriteLine("Starting Assignment 2");
@@ -25,4 +26,66 @@ string taskID = "rEu25ZX"; // We get the taskID from the previous response and u
 // Fetch the details of the task from the server.
 Response task1Response = await httpUtils.Get(baseURL + taskEndpoint + myPersonalID + "/" + taskID); // Get the task from the server
 Console.WriteLine(task1Response);
+Task task1 = JsonSerializer.Deserialize<Task>(task1Response.content);
+Console.WriteLine($"TASK: {ANSICodes.Effects.Bold}{task1?.title}{ANSICodes.Reset}\n{task1?.description}\nParameters: {Colors.Yellow}{task1?.parameters}{ANSICodes.Reset}");
 
+string numerals = task1.parameters;
+
+Dictionary<string, int> numeralTranslation = new Dictionary<string, int>
+{ 
+ {"I", 1},
+ {"V", 5},
+ {"X", 10},
+ {"L", 50},
+ {"C", 100},
+ {"D", 500},
+ {"M", 1000}
+};      
+
+int ConvertNumeral(string numerals)
+{
+    int result = 0;
+   
+    for (int i = 0; i < task1.parameters.Length; i++)
+    {
+        int numberTranslated = numeralTranslation[numerals[i].ToString()];
+
+        if (i + 1 < numerals.Length && numeralTranslation[numerals[i + 1].ToString()] > numberTranslated)
+        {
+            result -= numberTranslated;
+        }
+        else
+        {
+            result += numberTranslated;
+        }
+    }
+    return result;
+}
+
+
+var answer = ConvertNumeral(task1.parameters).ToString();
+Console.WriteLine($"Answer: {Colors.Green}{answer}{ANSICodes.Reset}");
+
+
+Response task1AnswerResponse = await httpUtils.Post(baseURL + taskEndpoint + myPersonalID + "/" + taskID, answer.ToString());
+Console.WriteLine($"Answer: {Colors.Green}{task1AnswerResponse}{ANSICodes.Reset}");
+
+
+
+//#### SECOND TASK
+
+string task2ID = "aAaa23";
+
+Response task2Response = await httpUtils.Get(baseURL + taskEndpoint + myPersonalID + "/" + task2ID);
+Console.WriteLine(task2Response);
+Task task2 = JsonSerializer.Deserialize<Task>(task2Response.content);
+Console.WriteLine($"TASK: {ANSICodes.Effects.Bold}{task2?.title}{ANSICodes.Reset}\n{task2?.description}\nParameters: {Colors.Yellow}{task2?.parameters}{ANSICodes.Reset}");
+
+class Task
+{
+    public string? title { get; set; }
+    public string? description { get; set; }
+    public string? taskID { get; set; }
+    public string? usierID { get; set; }
+    public string? parameters { get; set; }
+}
